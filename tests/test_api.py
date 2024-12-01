@@ -147,9 +147,9 @@ def test_get_game_replay(client):
     game_id = response.json()
     response = client.get(f"/games/{game_id}/replay/")
     assert response.status_code == 200
-    assert response.json() == ""
+    assert response.json() == {'result': ''}
 
     response = client.post(f"/games/{game_id}/move/", json={"x": 0, "y": 0})
     response = client.get(f"/games/{game_id}/replay/")
     assert response.status_code == 200
-    assert "X played at (0, 0)" in response.json()
+    assert "X played at (0, 0)" in response.json()["result"]

@@ -5,9 +5,9 @@
 To run the project locally, follow these steps:
 
 1. **Clone the repository**:
-   ```sh
-   git clone <repository-url>
-   cd games
+```sh
+git clone <repository-url>
+cd games
 ```
 
 
