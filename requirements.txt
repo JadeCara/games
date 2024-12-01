@@ -2,10 +2,12 @@ pytest
 pytest-asyncio
 pytest-cov
 
+fastapi == 0.115.*
+httpx == 0.28.*
 requests == 2.32.*
 pydantic == 2.9.*
 datamodel-code-generator == 0.26.*
-websockets == 10.0.*
+uvicorn == 0.32.*
 
 black
 flake8

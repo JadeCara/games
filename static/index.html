@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        #result, #replay {
+            margin-top: 20px;
+            font-size: 20px;
+            white-space: pre-line; /* Preserve whitespace and line breaks */
+            width: 45%;
+        }
+        .board {
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .board td {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Tic Tac Toe</h1>
+        <div>
+            <button onclick="createGame()">Start New Game</button>
+            <button onclick="getAllGames()">Get All Games</button>
+        </div>
+        <div style="margin-top: 20px;">
+            <input type="number" id="x" placeholder="x" min="0" max="2" disabled>
+            <input type="number" id="y" placeholder="y" min="0" max="2" disabled>
+            <button id="makeMoveButton" onclick="makeMoveFromInput()" disabled>Make Move</button>
+        </div>
+        <div id="result"></div>
+    </div>
+    <div id="replay"></div>
+    <script>
+        let gameId = null;
+
+        async function createGame() {
+            const response = await fetch('/games/', { method: 'POST' });
+            gameId = await response.text();
+            console.log("Game ID:", gameId); // Debugging statement
+            document.getElementById('result').textContent = 'Game started. Game ID: ' + gameId;
+            document.getElementById('x').disabled = false;
+            document.getElementById('y').disabled = false;
+            document.getElementById('makeMoveButton').disabled = false;
+        }
+
+        async function makeMove(x, y) {
+            if (!gameId) return;
+            console.log("Making move:", x, y); // Debugging statement
+            const response = await fetch(`/games/${gameId}/move/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ x, y })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                const formattedResult = formatResult(result.result);
+                document.getElementById('result').innerHTML = formattedResult;
+            } else {
+                alert(result.detail);
+            }
+        }
+
+        function makeMoveFromInput() {
+            const x = parseInt(document.getElementById('x').value);
+            const y = parseInt(document.getElementById('y').value);
+            if (isNaN(x) || isNaN(y) || x < 0 || x > 2 || y < 0 || y > 2) {
+                alert('Invalid coordinates');
+                return;
+            }
+            makeMove(x, y);
+        }
+
+        async function getAllGames() {
+            const response = await fetch('/games/', { method: 'GET' });
+            const games = await response.json();
+            let formattedGames = '';
+            for (const [gameId, gameDetails] of Object.entries(games)) {
+                formattedGames += `Game ID: ${gameId}\n`;
+                for (const [key, value] of Object.entries(gameDetails)) {
+                    formattedGames += `${key}: ${value}\n`;
+                }
+                formattedGames += `<button onclick="getReplay('${gameId}')">Instant Replay</button>\n`;
+                formattedGames += '\n';
+            }
+            document.getElementById('result').innerHTML = formattedGames.replace(/\n/g, '<br>');
+        }
+
+        async function getReplay(gameId) {
+            console.log("Fetching replay for game ID:", gameId); // Debugging statement
+            const response = await fetch(`/games/${gameId}/replay/`, { method: 'GET' });
+            const replay = await response.json();
+            console.log("Replay data:", replay); // Debugging statement
+            const formattedReplay = formatResult(replay.result);
+            document.getElementById('replay').innerHTML = formattedReplay;
+        }
+
+        function formatResult(result) {
+            const lines = result.split('\n');
+            let formattedResult = '';
+            let currentBoard = '';
+            for (const line of lines) {
+                if (line.includes('|')) {
+                    currentBoard += '<tr>';
+                    for (const cell of line.split('|')) {
+                        currentBoard += `<td>${cell}</td>`;
+                    }
+                    currentBoard += '</tr>';
+                } else {
+                    if (currentBoard) {
+                        formattedResult += `<table class="board">${currentBoard}</table><hr>`;
+                        currentBoard = '';
+                    }
+                    formattedResult += `<div>${line}</div>`;
+                }
+            }
+            if (currentBoard) {
+                formattedResult += `<table class="board">${currentBoard}</table>`;
+            }
+            return formattedResult;
+        }
+    </script>
+</body>
+</html>

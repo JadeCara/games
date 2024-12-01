@@ -6,5 +6,8 @@ services:
     volumes:
       - .:/app  # Mount the current directory to /app in the container
     working_dir: /app
+    ports:
+      - "8000:8000"  # Map port 8000 on the host to port 8000 in the container
     stdin_open: true  # Keep the container open for bash access
-    tty: true      
+    tty: true
+    command: uvicorn games.api:app --host 0.0.0.0 --port 8000
