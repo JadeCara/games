@@ -34,6 +34,7 @@ Navigate to localhost: http://0.0.0.0:8000/
 
 > [!TIP]
 > You will need to start a new game before you can enter any coordinates.
+> The Coordinates use computer numbering starting with 0. ie (0, 0) (1, 0), (2, 0) etc.
 
 ### How much time you spent building the project
 I spent between 3.5 and 4 hours on this project. I was mainly focused on the game and game context as well as the api elements. I used Github Copilot to make an interface. I also saved quite a bit of time by using a python set up template to get my MakeFile, DockerFile etc in place right away.

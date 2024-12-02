@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from games.tic_tac_toe.game import TicTacToe
+from games.tic_tac_toe import TicTacToe
 
 
 class GameContext(BaseModel):

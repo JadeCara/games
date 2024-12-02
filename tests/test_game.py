@@ -1,5 +1,5 @@
 import pytest
-from games.tic_tac_toe.game import TicTacToe
+from games.tic_tac_toe import TicTacToe
 
 
 def vertical_moves():
